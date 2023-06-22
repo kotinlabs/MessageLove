@@ -37,7 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   change_app_package_name: ^1.1.0
   get: ^4.6.5
-
+  url_launcher: ^6.1.11
+  permission_handler: ^10.3.0
+  telephony: ^0.2.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

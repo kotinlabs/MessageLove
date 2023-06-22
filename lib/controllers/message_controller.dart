@@ -6,8 +6,9 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:smartsms/main.dart';
 import 'package:telephony/telephony.dart';
 
-class HomeController extends GetxController {
+class MessageController extends GetxController {
   String _message = "";
+
   RxBool openSMS = false.obs;
   Telephony telephony = Telephony.instance;
 
@@ -67,6 +68,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     getSMS();
+    openConversation(Get.arguments);
     initPlatformState();
   }
 }

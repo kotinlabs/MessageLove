@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:smartsms/routes/app_pages.dart';
+import 'package:telephony/telephony.dart';
+
+onBackgroundMessage(SmsMessage message) {
+  debugPrint("onBackgroundMessage called");
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
