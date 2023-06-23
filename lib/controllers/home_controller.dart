@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -69,31 +69,34 @@ class HomeController extends GetxController {
     getSMS();
     initPlatformState();
   }
-}
+}*/
 
-
-
-/*import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:smartsms/main.dart';
+import 'package:smartsms/other/notification.dart';
 import 'package:telephony/telephony.dart';
 
 class HomeController extends GetxController {
-  String _message = "";
+  RxString messages = "".obs;
   Telephony telephony = Telephony.instance;
 
   StreamController<List<SmsMessage>> smsStreamController =
       StreamController<List<SmsMessage>>();
   Stream<List<SmsMessage>> get smsStream => smsStreamController.stream;
 
-  onMessage(SmsMessage message) async {
-    _message = message.body ?? "Error reading message body.";
+  void onMessage(SmsMessage message) async {
+    NotificationService().showTestNotification();
+    messages.value = message.body ?? "Error reading message body.";
+    print("stigla");
   }
 
-  onSendStatus(SendStatus status) {
-    _message = status == SendStatus.SENT ? "sent" : "delivered";
+  void onSendStatus(SendStatus status) {
+    print("poslano");
+    messages.value = status == SendStatus.SENT ? "sent" : "delivered";
   }
 
   Future<void> getSMS() async {
@@ -116,8 +119,9 @@ class HomeController extends GetxController {
 
   Future<void> initPlatformState() async {
     final bool? result = await telephony.requestPhoneAndSmsPermissions;
-
+    print(result);
     if (result != null && result) {
+      print('pozvano');
       telephony.listenIncomingSms(
         onNewMessage: onMessage,
         onBackgroundMessage: onBackgroundMessage,
@@ -131,4 +135,4 @@ class HomeController extends GetxController {
     getSMS();
     initPlatformState();
   }
-}*/
+}

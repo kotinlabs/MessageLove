@@ -3,51 +3,65 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:smartsms/controllers/home_controller.dart';
 import 'package:smartsms/other/color.dart';
+import 'package:smartsms/other/notification.dart';
+import 'package:telephony/telephony.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () {
-                  controller.getSMS();
-                },
-                icon: Icon(Icons.telegram))
-          ],
-          backgroundColor: color,
-          elevation: 0,
-          title: const Text('Smart SMS'),
-          centerTitle: true,
-        ),
-        body: StreamBuilder<List<String>>(
-          stream: controller.phoneNumberStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<String> phoneNumbers = snapshot.data!;
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: phoneNumbers.length,
-                itemBuilder: (context, index) {
-                  String phoneNumber = phoneNumbers[index];
-                  return ListTile(
-                    title: Text(phoneNumber),
-                    onTap: () {
-                      Get.toNamed('/message', arguments: phoneNumber);
-                      // controller.openConversation(phoneNumber);
-                    },
-                  );
-                },
-              );
-            } else {
-              return Center(
-                  child: CircularProgressIndicator(
-                color: color,
-              ));
-            }
-          },
-        ));
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                NotificationService().showTestNotification();
+                //  controller.getSMS();
+              },
+              icon: Icon(Icons.telegram))
+        ],
+        backgroundColor: color,
+        elevation: 0,
+        title: Obx(() => Text('${controller.messages.value}')),
+        centerTitle: true,
+      ),
+      body: StreamBuilder<List<SmsMessage>>(
+        stream: controller.smsStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<SmsMessage> messages = snapshot.data!;
+            return ListView.builder(
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                SmsMessage message = messages[index];
+                return Container(
+                  margin: EdgeInsets.only(
+                      left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(12),
+                    elevation: 3,
+                    child: ListTile(
+                      leading: Material(
+                          borderRadius: BorderRadius.circular(42),
+                          elevation: 3,
+                          color: color,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.message, color: Colors.white),
+                          )),
+                      title:
+                          Text(message.address?.replaceFirst(r'+', '') ?? ""),
+                      subtitle: Text(message.body ?? ""),
+                    ),
+                  ),
+                );
+              },
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 }
