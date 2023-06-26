@@ -21,7 +21,7 @@ public class MainActivity extends FlutterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Provjerava se je li aktivnost pokrenuta putem intenta ACTION_SEND
+        
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -47,7 +47,7 @@ public class MainActivity extends FlutterActivity {
     private void handleSendText(Intent intent) {
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (sharedText != null) {
-            // Ovdje možete obraditi primljeni tekst (sharedText) kako god želite
+        
         }
     }
 

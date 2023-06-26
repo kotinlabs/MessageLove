@@ -42,6 +42,7 @@ dependencies:
   telephony: ^0.2.0
   flutter_local_notifications: ^14.1.1
   android_intent_plus: ^4.0.1
+  shared_preferences: ^2.1.2
 
   
 dev_dependencies:

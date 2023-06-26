@@ -15,9 +15,9 @@ class HomeView extends GetView<HomeController> {
         actions: [
           IconButton(
               onPressed: () {
-                controller.setDefaultSms();
+                //    controller.setDefaultSms();
                 // NotificationService().showTestNotification();
-                //  controller.getSMS();
+                controller.test();
               },
               icon: Icon(Icons.telegram))
         ],

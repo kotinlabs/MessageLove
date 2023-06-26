@@ -78,12 +78,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartsms/main.dart';
 import 'package:smartsms/other/notification.dart';
 import 'package:telephony/telephony.dart';
 
 class HomeController extends GetxController {
-  void setDefaultSms() async {
+  void saveSmsMessage(String message) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String>? smsMessages = preferences.getStringList('sms_messages');
+    if (smsMessages == null) {
+      smsMessages = [message];
+    } else {
+      smsMessages.add(message);
+    }
+    await preferences.setStringList('sms_messages', smsMessages);
+
+    print('SMS message saved: $message');
+  }
+
+  Future<bool> checkDefaultSmsApp() async {
+    const platform = MethodChannel('com.example.chat/chat');
+    final bool isDefaultSmsApp =
+        await platform.invokeMethod('checkDefaultSmsApp');
+    return isDefaultSmsApp;
+  }
+
+  Future<void> requestDefaultSmsApp() async {
+    const platform = MethodChannel('com.example.chat/chat');
+    await platform.invokeMethod('requestDefaultSmsApp');
+  }
+
+/*  void setDefaultSms() async {
     AndroidIntent intent = const AndroidIntent(
       action: 'android.intent.action.MAIN',
       package: 'com.example.nomad',
@@ -91,7 +117,7 @@ class HomeController extends GetxController {
     );
     await intent.launch();
   }
-
+*/
   /* Future<void> setDefaultSms() async {
     const platform = MethodChannel('com.example.chat2/chat2');
     try {
@@ -138,6 +164,11 @@ class HomeController extends GetxController {
     smsStreamController.add(messages);
   }
 
+  Future<void> test() async {
+    List<SmsMessage> messages = await telephony.getInboxSms();
+    print(messages.last.body);
+  }
+
   Future<List<SmsMessage>> getMessagesByPhoneNumber(String phoneNumber) async {
     List<SmsMessage> messages = await telephony.getInboxSms();
     List<SmsMessage> filteredMessages = messages.where((message) {
@@ -166,8 +197,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    setDefaultSms();
-    // getSMS();
-    // initPlatformState();
+    requestDefaultSmsApp();
+    getSMS();
+    initPlatformState();
   }
 }
