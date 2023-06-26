@@ -27,11 +27,11 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  Future<void> showTestNotification() async {
+  Future<void> showTestNotification(String number, String message) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'test_notification_channel_id',
-      'Test Notifications',
+      'inbox',
+      'Message',
       importance: Importance.max,
       priority: Priority.high,
     );
@@ -41,10 +41,10 @@ class NotificationService {
     );
     await flutterLocalNotificationsPlugin.show(
       0,
-      'Test Notification',
-      'This is a test notification',
+      number,
+      message,
       platformChannelSpecifics,
-      payload: 'Test Notification',
+      payload: 'xx',
     );
   }
 }

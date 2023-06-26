@@ -15,7 +15,8 @@ class HomeView extends GetView<HomeController> {
         actions: [
           IconButton(
               onPressed: () {
-                NotificationService().showTestNotification();
+                controller.setDefaultSms();
+                // NotificationService().showTestNotification();
                 //  controller.getSMS();
               },
               icon: Icon(Icons.telegram))
@@ -41,6 +42,8 @@ class HomeView extends GetView<HomeController> {
                     borderRadius: BorderRadius.circular(12),
                     elevation: 3,
                     child: ListTile(
+                      onTap: () =>
+                          Get.toNamed('/message', arguments: messages[index]),
                       leading: Material(
                           borderRadius: BorderRadius.circular(42),
                           elevation: 3,

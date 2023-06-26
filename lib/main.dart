@@ -5,23 +5,16 @@ import 'package:get/route_manager.dart';
 import 'package:smartsms/other/notification.dart';
 import 'package:smartsms/routes/app_pages.dart';
 import 'package:telephony/telephony.dart';
+import 'package:flutter/services.dart';
 
 void onBackgroundMessage(SmsMessage message) {
-  NotificationService().showTestNotification();
+  NotificationService().showTestNotification(
+      message.address.toString(), message.body.toString());
   debugPrint("onBackgroundMessage called");
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Dodajte ovu liniju
-
-  const platform = MethodChannel('app.channel.shared.data');
-  platform.setMethodCallHandler((MethodCall call) async {
-    if (call.method == 'getSharedText') {
-      //  String sharedText = await getSharedTextFromAndroid();
-      // Dodajte kod za obradu podataka kako želite
-    }
-  });
-
+  WidgetsFlutterBinding.ensureInitialized();
   NotificationService().initNotification();
 
   runApp(
@@ -32,4 +25,11 @@ void main() async {
       getPages: AppPages.routes,
     ),
   );
+}
+
+void openSMSAppChooser() async {
+  const platform = MethodChannel('app.channel.sms');
+  try {
+    await platform.invokeMethod('openSMSAppChooser');
+  } catch (e) {}
 }

@@ -73,7 +73,9 @@ class HomeController extends GetxController {
 
 import 'dart:async';
 
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:smartsms/main.dart';
@@ -81,15 +83,47 @@ import 'package:smartsms/other/notification.dart';
 import 'package:telephony/telephony.dart';
 
 class HomeController extends GetxController {
+  void setDefaultSms() async {
+    AndroidIntent intent = const AndroidIntent(
+      action: 'android.intent.action.MAIN',
+      package: 'com.example.nomad',
+      componentName: 'com.example.nomad.DefaultSMSAppChooserActivity',
+    );
+    await intent.launch();
+  }
+
+  /* Future<void> setDefaultSms() async {
+    const platform = MethodChannel('com.example.chat2/chat2');
+    try {
+      await platform.invokeMethod('setDefaultSms');
+      print('ovde');
+    } catch (e) {
+      print('Poziv metode setDefaultSms nije uspio: $e');
+    }
+  }*/
+
+  /* static const MethodChannel _channel =
+      const MethodChannel('com.example.chat/chat');
+  static const platform = const MethodChannel("com.example.chat/chat");
+
+  Future<void> setDefaultSms() async {
+    try {
+      final result = await platform.invokeMethod('setDefaultSms');
+      print("Result: $result");
+    } on PlatformException catch (e) {
+      print("Error: $e");
+    }
+  }*/
+
   RxString messages = "".obs;
   Telephony telephony = Telephony.instance;
-
   StreamController<List<SmsMessage>> smsStreamController =
       StreamController<List<SmsMessage>>();
   Stream<List<SmsMessage>> get smsStream => smsStreamController.stream;
 
   void onMessage(SmsMessage message) async {
-    NotificationService().showTestNotification();
+    NotificationService().showTestNotification(
+        message.address.toString(), message.body.toString());
     messages.value = message.body ?? "Error reading message body.";
     print("stigla");
   }
@@ -132,7 +166,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getSMS();
-    initPlatformState();
+    setDefaultSms();
+    // getSMS();
+    // initPlatformState();
   }
 }
