@@ -32,6 +32,7 @@ class HomeController extends GetxController {
   Stream<List<SmsMessage>> get smsStream => smsStreamController.stream;
 
   void onMessage(SmsMessage message) async {
+    print(message);
     NotificationService().showTestNotification(
         message.address.toString(), message.body.toString());
     messages.value = message.body ?? "Error reading message body.";
