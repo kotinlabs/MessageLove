@@ -1,28 +1,16 @@
 import 'dart:async';
-
-import 'package:android_intent_plus/android_intent.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:smartsms/controllers/sms_controller.dart';
 import 'package:smartsms/main.dart';
 import 'package:smartsms/other/notification.dart';
 import 'package:telephony/telephony.dart';
 
 class HomeController extends GetxController {
-  Future<void> test() async {
-    const platform = MethodChannel('test');
-    try {
-      await platform.invokeMethod('openChangeDefaultSmsAppDialog');
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+  final smsController = Get.put(SmsController());
 
-  void openChangeDefaultSmsAppDialog() {
-    AndroidIntent intent = AndroidIntent(
-      action: 'android.provider.Telephony.ACTION_CHANGE_DEFAULT',
-    );
-    intent.launch();
+  Future<void> onSaveSMS(SmsMessage smsMessage) async {
+    await smsController.saveSms(smsMessage);
   }
 
   RxString messages = "".obs;
@@ -32,9 +20,9 @@ class HomeController extends GetxController {
   Stream<List<SmsMessage>> get smsStream => smsStreamController.stream;
 
   void onMessage(SmsMessage message) async {
-    print(message);
     NotificationService().showTestNotification(
         message.address.toString(), message.body.toString());
+    onSaveSMS(message);
     messages.value = message.body ?? "Error reading message body.";
   }
 
@@ -43,29 +31,43 @@ class HomeController extends GetxController {
     messages.value = status == SendStatus.SENT ? "sent" : "delivered";
   }
 
-  Future<void> getSMS() async {
-    List<SmsMessage> messages = await telephony.getInboxSms();
-    smsStreamController.add(messages);
-  }
-
   Future<void> initPlatformState() async {
-    final bool? result = await telephony.requestPhoneAndSmsPermissions;
-    print(result);
-    if (result != null && result) {
-      telephony.listenIncomingSms(
-        onNewMessage: onMessage,
-        onBackgroundMessage: onBackgroundMessage,
-      );
-    }
+    // final bool? result = await telephony.requestPhoneAndSmsPermissions;
+    // print(result);
+    // if (result != null && result) {
+    telephony.listenIncomingSms(
+      onNewMessage: onMessage,
+      onBackgroundMessage: onBackgroundMessage,
+    );
+    // }
   }
 
-  RxInt? addNumber;
-  Future createSMS() async {}
   @override
   void onInit() {
     super.onInit();
+    smsController.loadSmsList();
 
-    // getSMS();
     initPlatformState();
+  }
+}
+
+class SaveSmsMessage {
+  String address;
+  String body;
+
+  SaveSmsMessage({
+    required this.address,
+    required this.body,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {'address': address, 'body': body};
+  }
+
+  factory SaveSmsMessage.fromJson(Map<String, dynamic> json) {
+    return SaveSmsMessage(
+      address: json['address'] as String,
+      body: json['body'] as String,
+    );
   }
 }

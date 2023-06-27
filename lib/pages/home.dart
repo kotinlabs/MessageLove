@@ -12,62 +12,90 @@ class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () {
-                  controller.test();
-                },
-                icon: Icon(Icons.telegram))
-          ],
-          backgroundColor: color,
-          elevation: 0,
-          title: const Text('Smart SMS'),
-          centerTitle: true,
-        ),
-        body: Container()
-        /*StreamBuilder<List<SmsMessage>>(
-        stream: controller.smsStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<SmsMessage> messages = snapshot.data!;
-            return ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                SmsMessage message = messages[index];
-                return Container(
-                  margin: const EdgeInsets.only(
-                      left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(12),
-                    elevation: 3,
-                    child: ListTile(
-                      onTap: () =>
-                          Get.toNamed('/message', arguments: messages[index]),
-                      leading: Material(
-                          borderRadius: BorderRadius.circular(42),
-                          elevation: 3,
-                          color: color,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.message, color: Colors.white),
-                          )),
-                      title:
-                          Text(message.address?.replaceFirst(r'+', '') ?? ""),
-                      subtitle: Text(message.body ?? ""),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                final TextEditingController textController =
+                    TextEditingController();
+                Get.dialog(AlertDialog(
+                  title: Text('Add number'),
+                  content: TextFormField(
+                    controller: textController,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: '',
+                      hintText: '',
+                      prefixIcon: Icon(Icons.phone),
+                      border: OutlineInputBorder(),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '';
+                      }
+
+                      return null;
+                    },
                   ),
-                );
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Get.toNamed(
+                          '/message',
+                          arguments: SaveSmsMessage(
+                              address: '+${textController.text.trim()}',
+                              body: ''),
+                        );
+                      },
+                      child: Text('Add'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, null);
+                      },
+                      child: Text('Close'),
+                    ),
+                  ],
+                ));
               },
+              icon: Icon(Icons.telegram))
+        ],
+        backgroundColor: color,
+        elevation: 0,
+        title: const Text('Smart SMS'),
+        centerTitle: true,
+      ),
+      body: Obx(
+        () => ListView.builder(
+          itemCount: controller.smsController.smsList.length,
+          itemBuilder: (context, index) {
+            final sms = controller.smsController.smsList[index];
+            return Container(
+              margin: const EdgeInsets.only(
+                  left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
+              child: Material(
+                borderRadius: BorderRadius.circular(12),
+                elevation: 3,
+                child: ListTile(
+                  onTap: () => Get.toNamed('/message', arguments: sms),
+                  leading: Material(
+                      borderRadius: BorderRadius.circular(42),
+                      elevation: 3,
+                      color: color,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.message, color: Colors.white),
+                      )),
+                  title: Text(sms.address.replaceFirst(r'+', '')),
+                  subtitle: Text(sms.body),
+                ),
+              ),
             );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),*/
-        );
+          },
+        ),
+      ),
+    );
   }
 }

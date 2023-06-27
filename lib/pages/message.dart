@@ -16,20 +16,22 @@ class Message extends GetView<MessageController> {
         appBar: AppBar(
           backgroundColor: color,
           elevation: 0,
-          title: Text('${Get.arguments.address}'),
+          title: Text('${Get.arguments.address.replaceFirst(r'+', '')}'),
           centerTitle: true,
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(),
-              Material(
-                  borderRadius: BorderRadius.circular(12),
-                  elevation: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text("${Get.arguments.body}"),
-                  )),
+              Get.arguments.body == ''
+                  ? const SizedBox()
+                  : Material(
+                      borderRadius: BorderRadius.circular(12),
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text("${Get.arguments.body}"),
+                      )),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
