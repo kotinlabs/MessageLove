@@ -1,6 +1,8 @@
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:smartsms/controllers/home_controller.dart';
 import 'package:smartsms/other/color.dart';
 import 'package:smartsms/other/notification.dart';
@@ -10,18 +12,20 @@ class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
               onPressed: () {
-                controller.createSMS();
+                controller.openChangeDefaultSmsAppDialog();
               },
               icon: Icon(Icons.telegram))
         ],
         backgroundColor: color,
         elevation: 0,
-        title: Obx(() => const Text('Smart SMS')),
+        title: const Text('Smart SMS'),
         centerTitle: true,
       ),
       body: StreamBuilder<List<SmsMessage>>(
@@ -34,7 +38,7 @@ class HomeView extends GetView<HomeController> {
               itemBuilder: (context, index) {
                 SmsMessage message = messages[index];
                 return Container(
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                       left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
                   child: Material(
                     borderRadius: BorderRadius.circular(12),

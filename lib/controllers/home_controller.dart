@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:get/get.dart';
 
 import 'package:smartsms/main.dart';
@@ -7,6 +8,13 @@ import 'package:smartsms/other/notification.dart';
 import 'package:telephony/telephony.dart';
 
 class HomeController extends GetxController {
+  void openChangeDefaultSmsAppDialog() {
+    AndroidIntent intent = AndroidIntent(
+      action: 'android.provider.Telephony.ACTION_CHANGE_DEFAULT',
+    );
+    intent.launch();
+  }
+
   RxString messages = "".obs;
   Telephony telephony = Telephony.instance;
   StreamController<List<SmsMessage>> smsStreamController =
@@ -47,7 +55,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
 
-    getSMS();
-    initPlatformState();
+    // getSMS();
+    // initPlatformState();
   }
 }
