@@ -15,15 +15,13 @@ class HomeView extends GetView<HomeController> {
         actions: [
           IconButton(
               onPressed: () {
-                //    controller.setDefaultSms();
-                // NotificationService().showTestNotification();
-                controller.test();
+                controller.createSMS();
               },
               icon: Icon(Icons.telegram))
         ],
         backgroundColor: color,
         elevation: 0,
-        title: Obx(() => Text('${controller.messages.value}')),
+        title: Obx(() => const Text('Smart SMS')),
         centerTitle: true,
       ),
       body: StreamBuilder<List<SmsMessage>>(

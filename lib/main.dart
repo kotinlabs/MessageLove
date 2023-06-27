@@ -26,10 +26,3 @@ void main() async {
     ),
   );
 }
-
-void openSMSAppChooser() async {
-  const platform = MethodChannel('app.channel.sms');
-  try {
-    await platform.invokeMethod('openSMSAppChooser');
-  } catch (e) {}
-}

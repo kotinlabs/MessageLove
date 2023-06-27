@@ -1,41 +1,12 @@
 import 'dart:async';
 
-import 'package:android_intent_plus/android_intent.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:smartsms/main.dart';
 import 'package:smartsms/other/notification.dart';
 import 'package:telephony/telephony.dart';
 
 class HomeController extends GetxController {
-  void saveSmsMessage(String message) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    List<String>? smsMessages = preferences.getStringList('sms_messages');
-    if (smsMessages == null) {
-      smsMessages = [message];
-    } else {
-      smsMessages.add(message);
-    }
-    await preferences.setStringList('sms_messages', smsMessages);
-
-    print('SMS message saved: $message');
-  }
-
-  Future<bool> checkDefaultSmsApp() async {
-    const platform = MethodChannel('com.example.chat/chat');
-    final bool isDefaultSmsApp =
-        await platform.invokeMethod('checkDefaultSmsApp');
-    return isDefaultSmsApp;
-  }
-
-  Future<void> requestDefaultSmsApp() async {
-    const platform = MethodChannel('com.example.chat/chat');
-    await platform.invokeMethod('requestDefaultSmsApp');
-  }
-
   RxString messages = "".obs;
   Telephony telephony = Telephony.instance;
   StreamController<List<SmsMessage>> smsStreamController =
@@ -46,11 +17,11 @@ class HomeController extends GetxController {
     NotificationService().showTestNotification(
         message.address.toString(), message.body.toString());
     messages.value = message.body ?? "Error reading message body.";
-    print("stigla");
+    print(messages.value);
   }
 
   void onSendStatus(SendStatus status) {
-    print("poslano");
+    print(status);
     messages.value = status == SendStatus.SENT ? "sent" : "delivered";
   }
 
@@ -59,29 +30,10 @@ class HomeController extends GetxController {
     smsStreamController.add(messages);
   }
 
-  Future<void> test() async {
-    List<SmsMessage> messages = await telephony.getInboxSms();
-    print(messages.last.body);
-  }
-
-  Future<List<SmsMessage>> getMessagesByPhoneNumber(String phoneNumber) async {
-    List<SmsMessage> messages = await telephony.getInboxSms();
-    List<SmsMessage> filteredMessages = messages.where((message) {
-      return message.address == phoneNumber;
-    }).toList();
-    return filteredMessages;
-  }
-
-  Future<void> openConversation(String phoneNumber) async {
-    List<SmsMessage> messages = await getMessagesByPhoneNumber(phoneNumber);
-    smsStreamController.add(messages);
-  }
-
   Future<void> initPlatformState() async {
     final bool? result = await telephony.requestPhoneAndSmsPermissions;
     print(result);
     if (result != null && result) {
-      print('pozvano');
       telephony.listenIncomingSms(
         onNewMessage: onMessage,
         onBackgroundMessage: onBackgroundMessage,
@@ -89,10 +41,12 @@ class HomeController extends GetxController {
     }
   }
 
+  RxInt? addNumber;
+  Future createSMS() async {}
   @override
   void onInit() {
     super.onInit();
-    requestDefaultSmsApp();
+
     getSMS();
     initPlatformState();
   }
