@@ -15,20 +15,21 @@ class HomeView extends GetView<HomeController> {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                controller.openChangeDefaultSmsAppDialog();
-              },
-              icon: Icon(Icons.telegram))
-        ],
-        backgroundColor: color,
-        elevation: 0,
-        title: const Text('Smart SMS'),
-        centerTitle: true,
-      ),
-      body: StreamBuilder<List<SmsMessage>>(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
+                  controller.test();
+                },
+                icon: Icon(Icons.telegram))
+          ],
+          backgroundColor: color,
+          elevation: 0,
+          title: const Text('Smart SMS'),
+          centerTitle: true,
+        ),
+        body: Container()
+        /*StreamBuilder<List<SmsMessage>>(
         stream: controller.smsStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -66,7 +67,7 @@ class HomeView extends GetView<HomeController> {
             return Center(child: CircularProgressIndicator());
           }
         },
-      ),
-    );
+      ),*/
+        );
   }
 }
