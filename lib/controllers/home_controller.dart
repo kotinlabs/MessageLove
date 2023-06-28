@@ -9,6 +9,17 @@ import 'package:telephony/telephony.dart';
 class HomeController extends GetxController {
   final smsController = Get.put(SmsController());
 
+  Future<void> getSMS() async {
+    List<SmsMessage> messages = await telephony.getInboxSms();
+
+    for (var message in messages) {
+      smsController.smsList.add(SaveSmsMessage(
+        address: message.address!,
+        body: message.body!,
+      ));
+    }
+  }
+
   Future<void> onSaveSMS(SmsMessage smsMessage) async {
     await smsController.saveSms(smsMessage);
   }
@@ -46,7 +57,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     smsController.loadSmsList();
-
+    getSMS();
     initPlatformState();
   }
 }

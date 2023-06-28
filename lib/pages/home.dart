@@ -68,33 +68,45 @@ class HomeView extends GetView<HomeController> {
         centerTitle: true,
       ),
       body: Obx(
-        () => ListView.builder(
-          itemCount: controller.smsController.smsList.length,
-          itemBuilder: (context, index) {
-            final sms = controller.smsController.smsList[index];
-            return Container(
-              margin: const EdgeInsets.only(
-                  left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
-              child: Material(
-                borderRadius: BorderRadius.circular(12),
-                elevation: 3,
-                child: ListTile(
-                  onTap: () => Get.toNamed('/message', arguments: sms),
-                  leading: Material(
-                      borderRadius: BorderRadius.circular(42),
-                      elevation: 3,
-                      color: color,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.message, color: Colors.white),
-                      )),
-                  title: Text(sms.address.replaceFirst(r'+', '')),
-                  subtitle: Text(sms.body),
+        () => controller.smsController.smsList.isEmpty
+            ? Center(
+                child: IconButton(
+                  icon: Icon(
+                    Icons.replay,
+                    color: color,
+                  ),
+                  onPressed: () {
+                    controller.getSMS();
+                  },
                 ),
+              )
+            : ListView.builder(
+                itemCount: controller.smsController.smsList.length,
+                itemBuilder: (context, index) {
+                  final sms = controller.smsController.smsList[index];
+                  return Container(
+                    margin: const EdgeInsets.only(
+                        left: 20.0, right: 20.0, bottom: 10.0, top: 10.0),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(12),
+                      elevation: 3,
+                      child: ListTile(
+                        onTap: () => Get.toNamed('/message', arguments: sms),
+                        leading: Material(
+                            borderRadius: BorderRadius.circular(42),
+                            elevation: 3,
+                            color: color,
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.message, color: Colors.white),
+                            )),
+                        title: Text(sms.address.replaceFirst(r'+', '')),
+                        subtitle: Text(sms.body),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }
