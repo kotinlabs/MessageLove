@@ -1,6 +1,8 @@
-# smartsms
+# MessageLove
 
 A new Flutter project.
+
+This project was originally copied from the SmartSMS project.
 
 ## Getting Started
 
